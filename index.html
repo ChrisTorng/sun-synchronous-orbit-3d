@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a1122">
+<title>晨昏太陽同步軌道｜3D 幾何實驗室</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1122;--panel:#121d34;--border:#293954;--fg:#eff5ff;--muted:#a6bad4;--yellow:#ffcb62;--red:#fb7583;--green:#55dabd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,"Microsoft JhengHei",sans-serif}
+header{padding:13px 20px;border-bottom:1px solid var(--border);background:#101b30}h1{font-size:20px;margin:0}header p{color:var(--muted);font-size:12px;margin:2px 0 0}
+main{display:grid;grid-template-columns:minmax(300px,350px) minmax(400px,1fr);height:calc(100dvh - 66px);min-height:610px}
+aside{padding:16px 18px;overflow:auto;border-right:1px solid var(--border);background:var(--panel)}
+h2{font-size:15px;margin:5px 0 12px}h3{font-size:13px;color:#c9daf3;margin:18px 0 9px}
+label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;margin:13px 0 2px}.val{color:var(--yellow);font-variant-numeric:tabular-nums;font-weight:650}
+input[type=range]{width:100%;accent-color:#78b9ff;cursor:pointer}input[type=checkbox]{accent-color:#78b9ff}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row label{margin:6px 0;justify-content:flex-start;gap:7px}
+button{font:inherit;color:var(--fg);padding:7px 11px;border:1px solid #456181;background:#1c3656;border-radius:7px;cursor:pointer}button:hover{background:#275178}button:focus-visible,input:focus-visible{outline:2px solid #73b8ff;outline-offset:2px}
+button.active{background:#285b68;border-color:var(--green)}button:disabled{opacity:.45;cursor:default}
+.presets button{font-size:12px;padding:5px 9px}.small{font-size:12px;color:var(--muted)}.note{background:#162843;padding:10px;border-left:3px solid #77b8ff;font-size:12px}
+#view{position:relative;min-height:450px;overflow:hidden}#canvas{position:absolute;inset:0}
+.info{position:absolute;left:14px;bottom:14px;background:#0c152bc9;border:1px solid #314766;border-radius:9px;padding:12px;max-width:min(440px,calc(100% - 28px));font-size:13px;backdrop-filter:blur(6px)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}.metrics strong{color:var(--fg);font-variant-numeric:tabular-nums}.metrics span{color:var(--muted)}.sun{color:var(--green)}.eclipse{color:var(--red)}
+.legend{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:5px;padding:9px;background:#0c152bc4;border-radius:8px;font-size:12px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+#err{display:none;position:absolute;top:35%;left:8%;max-width:84%;background:#331b28;border:1px solid #e28a94;padding:18px;border-radius:10px}
+footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--border);padding-top:12px;margin-top:15px}
+@media(max-width:820px){main{display:flex;flex-direction:column;height:auto}#view{min-height:520px;height:65dvh;order:0}aside{order:1;overflow:visible;border:0;border-top:1px solid var(--border)}header{padding:10px 14px}h1{font-size:17px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+</head>
+<body>
+<header><h1>晨昏太陽同步軌道 · 3D 幾何實驗室</h1><p>不使用真實衛星清單；直接觀察向陽軌道、極軌、日照與地球陰影</p></header>
+<main>
+<aside>
+<h2>調整軌道與太陽</h2>
+<div class="presets row">
+<button id="dawn">06:00 晨昏</button><button id="morning">10:30</button><button id="noon">12:00 正午</button><button id="dusk">18:00 晨昏</button>
+</div>
+<label for="alt">衛星高度 <output id="altv" class="val"></output></label>
+<input type="range" id="alt" min="200" max="2000" step="10" value="550">
+<div class="small">地球半徑 6,371 公里；軌道高度依真實比例呈現。</div>
+<label for="ltan">軌道通過赤道的當地太陽時間（LTAN） <output id="ltanv" class="val"></output></label>
+<input type="range" id="ltan" min="0" max="24" step="0.25" value="6">
+<div class="small">06:00 或 18:00 是「晨昏」：軌道平面接近正對太陽。</div>
+<label for="day">一年中的日期 <output id="dayv" class="val"></output></label>
+<input type="range" id="day" min="1" max="365" step="1" value="80">
+<div class="row"><button id="yearPlay">播放全年變化</button><button id="orbitPlay">播放衛星運行</button></div>
+<label for="phase">衛星在軌道上的位置 <output id="phasev" class="val"></output></label>
+<input type="range" id="phase" min="0" max="360" step="1" value="235">
+<h3>傾角與比較</h3>
+<div class="row"><label><input type="checkbox" id="custom">自訂軌道傾角</label><label><input type="checkbox" id="compare">疊加其他軌道</label></div>
+<label for="inc">軌道傾角 <output id="incv" class="val"></output></label>
+<input type="range" id="inc" min="0" max="180" step="0.1" value="97.6" disabled>
+<div class="small">預設以 J2 地球非球形重力效應，計算該高度近似太陽同步所需傾角。</div>
+<h3>圖層</h3>
+<div class="row"><label><input type="checkbox" id="showShadow" checked>地球本影</label><label><input type="checkbox" id="showGrid" checked>經緯線</label><label><input type="checkbox" id="showSun" checked>太陽光方向</label></div>
+<div class="note" style="margin-top:13px"><strong>操作方式：</strong>拖曳旋轉 3D 視角；滾輪縮放。先選「06:00 晨昏」，將視角朝太陽光箭頭的方向觀看軌道平面，再調成 10:30 或 12:00 比較。調整日期則能理解為什麼不是全年完美 90°。</div>
+<footer>比例說明：地球半徑、軌道半徑、陰影寬度和衛星位置使用同一空間尺度。衛星發光小點、箭頭、光線符號及線條粗細僅為視覺標記，不按比例。模型使用圓形軌道、簡化的均勻歲差（J2）、均速太陽視黃經與太陽光平行近似；非精密星曆或碰撞分析工具。<br><a href="https://github.com/ChrisTorng/sun-synchronous-orbit-3d" target="_blank" rel="noopener" style="color:#89caff">原始碼與計算假設</a></footer>
+</aside>
+<section id="view" aria-label="可拖拉旋轉的三維地球與軌道">
+<div id="canvas"></div>
+<div class="legend">
+<div><i class="dot" style="background:#ffcb62"></i>有日照的軌道</div><div><i class="dot" style="background:#fb7583"></i>進入地球陰影</div>
+<div><i class="dot" style="background:#68ffdc"></i>衛星位置</div><div><i class="dot" style="background:#95a8e8"></i>比較軌道</div>
+</div>
+<div class="info"><div id="status" style="margin-bottom:7px"></div><div class="metrics" id="metrics"></div></div>
+<div id="err">3D 畫面無法啟動。請確認瀏覽器支援 WebGL 且可讀取 Three.js CDN。</div>
+</section>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const RE=6371, MU=398600.4418, J2=1.08262668e-3, EPS=23.43928*Math.PI/180, YEAR=365.2422;
+const ids=['alt','ltan','day','phase','inc','custom','compare','showShadow','showGrid','showSun'];
+const el=Object.fromEntries(ids.map(x=>[x,document.getElementById(x)]));
+const out=id=>document.getElementById(id);
+const d2r=x=>x*Math.PI/180, r2d=x=>x*180/Math.PI;
+let scene,camera,renderer,controls,earth,grid,shadow,beam,sunMarker,orbitGroup,sat,axis,orbitPath,readouts={},playOrbit=false,playYear=false,lastTick=0;
+let period=95,inc=98,dayTick=0;
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+const sunVector=day=>{const L=2*Math.PI*(day-80)/YEAR;return V(Math.cos(L),Math.cos(EPS)*Math.sin(L),Math.sin(EPS)*Math.sin(L)).normalize()};
+function sunSyncInclination(alt){
+  const a=RE+alt,n=Math.sqrt(MU/(a*a*a)),rate=2*Math.PI/(YEAR*86400);
+  const c=-rate/(1.5*J2*n*Math.pow(RE/a,2));
+  return Math.acos(Math.max(-1,Math.min(1,c)));
+}
+function orbitalBasis(i,omega){
+  const p=V(Math.cos(omega),Math.sin(omega),0);
+  const q=V(-Math.sin(omega)*Math.cos(i),Math.cos(omega)*Math.cos(i),Math.sin(i));
+  const h=V(Math.sin(i)*Math.sin(omega),-Math.sin(i)*Math.cos(omega),Math.cos(i));
+  return {p,q,h};
+}
+function orbitState(ltan,alt,i,day){
+  // RAAN precesses at nearly mean-solar rate, not following true solar RA exactly.
+  const omega=2*Math.PI*(day-80)/YEAR+(ltan-12)*Math.PI/12;
+  const basis=orbitalBasis(i,omega);
+  const sun=sunVector(day);
+  const beta=Math.asin(THREE.MathUtils.clamp(basis.h.dot(sun),-1,1));
+  const threshold=Math.asin(RE/(RE+alt));
+  const eclipsed=Math.abs(beta)<threshold;
+  const halfAngle=eclipsed?Math.acos(THREE.MathUtils.clamp(Math.sqrt(1-Math.pow(RE/(RE+alt),2))/Math.abs(Math.cos(beta)),-1,1)):0;
+  const periodSec=2*Math.PI*Math.sqrt(Math.pow(RE+alt,3)/MU);
+  return {alt,i,ltan,basis,sun,beta,threshold,halfAngle,periodSec,eclipseSec:periodSec*halfAngle/Math.PI};
+}
+function at(o,f){return o.basis.p.clone().multiplyScalar((RE+o.alt)*Math.cos(f)).addScaledVector(o.basis.q,(RE+o.alt)*Math.sin(f))}
+function dark(point,sun){return point.dot(sun)<0 && point.clone().cross(sun).length()<RE}
+function makeGrid(){
+ const group=new THREE.Group();
+ const m=new THREE.LineBasicMaterial({color:0x91d6ef,transparent:true,opacity:0.28});
+ for(let lat=-75;lat<=75;lat+=15){let pts=[];for(let t=0;t<=128;t++){let lon=t/128*2*Math.PI,phi=d2r(lat);pts.push(V(RE*1.002*Math.cos(phi)*Math.cos(lon),RE*1.002*Math.cos(phi)*Math.sin(lon),RE*1.002*Math.sin(phi)))}group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),m))}
+ for(let lon=0;lon<180;lon+=15){let pts=[];for(let t=0;t<=128;t++){let lat=-Math.PI/2+t/128*Math.PI,phi=d2r(lon);pts.push(V(RE*1.002*Math.cos(lat)*Math.cos(phi),RE*1.002*Math.cos(lat)*Math.sin(phi),RE*1.002*Math.sin(lat)))}group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),m))}
+ return group;
+}
+function makeEarth(){
+ const g=new THREE.Group();
+ earth=new THREE.Mesh(new THREE.SphereGeometry(RE,72,48),new THREE.MeshPhongMaterial({color:0x438bc7,shininess:13,specular:0x587da6,emissive:0x081932,emissiveIntensity:0.75}));g.add(earth);
+ grid=makeGrid();g.add(grid);
+ const equator=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(Array.from({length:180},(_,j)=>V(RE*1.006*Math.cos(j*2*Math.PI/180),RE*1.006*Math.sin(j*2*Math.PI/180),0))),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:0.2}));
+ g.add(equator);
+ const material=new THREE.MeshBasicMaterial({color:0xf0f6ff});
+ for(const z of [RE,-RE]){const dot=new THREE.Mesh(new THREE.SphereGeometry(68,12,8),material);dot.position.z=z;g.add(dot)}
+ return g;
+}
+function makePath(o,comparison=false){
+ const n=360,a=[],b=[];
+ for(let j=0;j<n;j++){const x=at(o,j*2*Math.PI/n),y=at(o,(j+1)*2*Math.PI/n);const mid=at(o,(j+0.5)*2*Math.PI/n);
+  const target=dark(mid,o.sun)?b:a;target.push(x.x,x.y,x.z,y.x,y.y,y.z)}
+ const group=new THREE.Group();
+ for(const [data,color] of [[a,comparison?0x748ac7:0xffcb62],[b,comparison?0x465577:0xfb7583]]){
+  const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(data,3));
+  const mat=new THREE.LineBasicMaterial({color,transparent:comparison,opacity:comparison?0.45:1});
+  group.add(new THREE.LineSegments(geom,mat))}
+ return group;
+}
+function drawShadow(sun){
+ if(shadow){scene.remove(shadow);shadow.geometry.dispose();shadow.material.dispose()}
+ const len=RE*3.3,AU=149597870,SUNR=696340,coneLength=RE*AU/(SUNR-RE);
+ const radNear=RE,radFar=RE*(1-len/coneLength);
+ // Cylinder +Y points away from the Sun; far-end radius is slightly narrower.
+ shadow=new THREE.Mesh(new THREE.CylinderGeometry(radFar,radNear,len,72,1,true),new THREE.MeshBasicMaterial({color:0x6c73a1,transparent:true,opacity:.17,depthWrite:false,side:THREE.DoubleSide}));
+ shadow.quaternion.setFromUnitVectors(V(0,1,0),sun.clone().negate());
+ shadow.position.copy(sun).multiplyScalar(-len/2);
+ shadow.visible=el.showShadow.checked;scene.add(shadow);
+}
+function drawSun(sun){
+ if(beam){scene.remove(beam);beam.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material)x.material.dispose()})}
+ beam=new THREE.Group();
+ const dir=sun.clone().negate(),orig=sun.clone().multiplyScalar(RE*2.3),length=RE*0.85;
+ const arrow=new THREE.ArrowHelper(dir,orig,length,0xffd377,550,250);beam.add(arrow);
+ for(let j=-2;j<=2;j++){
+   const v=V(0,j*RE*0.21,0).add(sun.clone().multiplyScalar(RE*1.72));
+   const line=new THREE.ArrowHelper(dir,v,RE*.43,0xffcc76,250,110);beam.add(line)
+ }
+ beam.visible=el.showSun.checked;scene.add(beam);
+}
+function resize(){
+ const v=out('canvas'),w=v.clientWidth,h=v.clientHeight;
+ if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)
+}
+function init(){
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x081223);
+ camera=new THREE.PerspectiveCamera(40,1,30,RE*28);
+ camera.position.set(RE*2.2,RE*2.0,RE*1.35);
+ renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
+ out('canvas').appendChild(renderer.domElement);
+ controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=RE*1.08;controls.maxDistance=RE*12;
+ scene.add(new THREE.AmbientLight(0x334c78,1.2));
+ const light=new THREE.DirectionalLight(0xffffff,3.6);light.name='sunlight';scene.add(light);
+ scene.add(makeEarth());
+ sat=new THREE.Group();
+ const p=new THREE.Mesh(new THREE.SphereGeometry(105,16,12),new THREE.MeshBasicMaterial({color:0x68ffdc}));sat.add(p);
+ const halo=new THREE.Sprite(new THREE.SpriteMaterial({color:0x68ffdc,transparent:true,opacity:0.4,depthTest:false}));
+ halo.scale.set(RE*.08,RE*.08,1);sat.add(halo);scene.add(sat);
+ orbitGroup=new THREE.Group();scene.add(orbitGroup);
+ axis=new THREE.ArrowHelper(V(0,0,1),V(0,0,-RE*1.18),RE*2.36,0xa3c1ec,330,110);scene.add(axis);
+ new ResizeObserver(resize).observe(out('canvas'));resize();refresh();
+ requestAnimationFrame(frame)
+}
+function refresh(){
+ const alt=+el.alt.value, ltan=+el.ltan.value, day=+el.day.value, phase=+el.phase.value;
+ inc=el.custom.checked?d2r(+el.inc.value):sunSyncInclination(alt);
+ el.inc.disabled=!el.custom.checked;if(!el.custom.checked)el.inc.value=r2d(inc).toFixed(1);
+ const o=orbitState(ltan,alt,inc,day);readouts=o;period=o.periodSec/60;
+ out('altv').textContent=alt.toLocaleString()+' km';
+ out('ltanv').textContent=String(Math.floor(ltan)%24).padStart(2,'0')+':'+String(Math.round((ltan%1)*60)).padStart(2,'0');
+ const dt=new Date(Date.UTC(2026,0,day));out('dayv').textContent=(dt.getUTCMonth()+1)+'/'+dt.getUTCDate()+'（第 '+day+' 天）';
+ out('phasev').textContent=phase+'°';out('incv').textContent=r2d(inc).toFixed(2)+'°';
+ out('dawn').classList.toggle('active',ltan===6);out('morning').classList.toggle('active',ltan===10.5);
+ out('noon').classList.toggle('active',ltan===12);out('dusk').classList.toggle('active',ltan===18);
+ orbitGroup.clear();orbitGroup.add(makePath(o));
+ if(el.compare.checked){for(const t of [6,10.5,12,18])if(Math.abs(t-ltan)>0.1)orbitGroup.add(makePath(orbitState(t,alt,inc,day),true))}
+ sat.position.copy(at(o,d2r(phase)));
+ const inDark=dark(sat.position,o.sun);
+ drawShadow(o.sun);drawSun(o.sun);grid.visible=el.showGrid.checked;
+ scene.getObjectByName('sunlight').position.copy(o.sun).multiplyScalar(RE*30);
+ const beta=r2d(o.beta),threshold=r2d(o.threshold);
+ out('status').innerHTML='<strong>太陽光與軌道平面的 β 角： '+Math.abs(beta).toFixed(1)+'°</strong><br>'+
+  '<span class="'+(o.eclipseSec===0?'sun':'eclipse')+'">'+(o.eclipseSec===0?'全程日照（幾何模型）':'每圈有一段地球本影')+'</span>'+
+  '　目前衛星：'+(inDark?'<span class="eclipse">陰影中</span>':'<span class="sun">日照中</span>');
+ out('metrics').innerHTML='<span>太陽同步傾角</span><strong>'+r2d(sunSyncInclination(alt)).toFixed(2)+'°</strong>'+
+ '<span>實際使用傾角</span><strong>'+r2d(inc).toFixed(2)+'°</strong>'+
+ '<span>無本影所需 |β|</span><strong>≥ '+threshold.toFixed(1)+'°</strong>'+
+ '<span>每圈繞行時間</span><strong>'+period.toFixed(1)+' 分</strong>'+
+ '<span>每圈進入陰影</span><strong>'+Math.round(o.eclipseSec/60*10)/10+' 分</strong>'+
+ '<span>軌道／地球半徑</span><strong>'+((RE+alt)/RE).toFixed(3)+' 倍</strong>';
+}
+function frame(t){
+ const dt=Math.min(0.06,Math.max(0,(t-lastTick)/1000));lastTick=t;
+ if(playOrbit){el.phase.value=(+el.phase.value+dt*360/(period*2))%360;refresh()}
+ if(playYear){dayTick+=dt*4;if(dayTick>=1){el.day.value=(+el.day.value+Math.floor(dayTick)-1)%365+1;dayTick%=1;refresh()}}
+ controls.update();renderer.render(scene,camera);requestAnimationFrame(frame)
+}
+ids.forEach(id=>el[id].addEventListener('input',refresh));
+for(const [id,value] of [['dawn',6],['morning',10.5],['noon',12],['dusk',18]]){
+ out(id).addEventListener('click',()=>{el.ltan.value=value;refresh()})
+}
+out('orbitPlay').addEventListener('click',()=>{playOrbit=!playOrbit;out('orbitPlay').classList.toggle('active',playOrbit);out('orbitPlay').textContent=playOrbit?'暫停衛星':'播放衛星運行'});
+out('yearPlay').addEventListener('click',()=>{playYear=!playYear;out('yearPlay').classList.toggle('active',playYear);out('yearPlay').textContent=playYear?'暫停全年':'播放全年變化'});
+try{init()}catch(e){out('err').style.display='block';out('err').textContent='3D 畫面啟動失敗：'+e.message;console.error(e)}
+</script>
+</body></html>
