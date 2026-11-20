@@ -8,23 +8,23 @@
 :root{color-scheme:dark;--bg:#0a1122;--panel:#121d34;--border:#293954;--fg:#eff5ff;--muted:#a6bad4;--yellow:#ffcb62;--red:#fb7583;--green:#55dabd}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,"Microsoft JhengHei",sans-serif}
 header{padding:13px 20px;border-bottom:1px solid var(--border);background:#101b30}h1{font-size:20px;margin:0}header p{color:var(--muted);font-size:12px;margin:2px 0 0}
-main{display:grid;grid-template-columns:minmax(300px,350px) minmax(400px,1fr);height:calc(100dvh - 66px);min-height:610px}
-aside{padding:16px 18px;overflow:auto;border-right:1px solid var(--border);background:var(--panel)}
+body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}header{flex:0 0 auto}main{display:grid;grid-template-columns:minmax(300px,350px) minmax(350px,1fr);flex:1;min-height:0;height:auto}
+aside{padding:16px 18px;overflow:auto;min-height:0;border-right:1px solid var(--border);background:var(--panel);scrollbar-width:thin}
 h2{font-size:15px;margin:5px 0 12px}h3{font-size:13px;color:#c9daf3;margin:18px 0 9px}
 label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;margin:13px 0 2px}.val{color:var(--yellow);font-variant-numeric:tabular-nums;font-weight:650}
-input[type=range]{width:100%;accent-color:#78b9ff;cursor:pointer}input[type=checkbox]{accent-color:#78b9ff}
+input[type=range]{width:100%;accent-color:#78b9ff;cursor:pointer;min-height:26px;touch-action:pan-y}input[type=checkbox]{accent-color:#78b9ff}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row label{margin:6px 0;justify-content:flex-start;gap:7px}
-button{font:inherit;color:var(--fg);padding:7px 11px;border:1px solid #456181;background:#1c3656;border-radius:7px;cursor:pointer}button:hover{background:#275178}button:focus-visible,input:focus-visible{outline:2px solid #73b8ff;outline-offset:2px}
+button{font:inherit;color:var(--fg);padding:7px 11px;border:1px solid #456181;background:#1c3656;border-radius:7px;cursor:pointer;touch-action:manipulation}button:hover{background:#275178}button:focus-visible,input:focus-visible{outline:2px solid #73b8ff;outline-offset:2px}
 button.active{background:#285b68;border-color:var(--green)}button:disabled{opacity:.45;cursor:default}
 .presets button{font-size:12px;padding:5px 9px}.small{font-size:12px;color:var(--muted)}.note{background:#162843;padding:10px;border-left:3px solid #77b8ff;font-size:12px}
 #view{position:relative;min-height:450px;overflow:hidden}#canvas{position:absolute;inset:0}
-.info{position:absolute;left:14px;bottom:14px;background:#0c152bc9;border:1px solid #314766;border-radius:9px;padding:12px;max-width:min(440px,calc(100% - 28px));font-size:13px;backdrop-filter:blur(6px)}
+.info{position:absolute;left:14px;bottom:14px;background:#0c152bc9;border:1px solid #314766;border-radius:9px;padding:10px 12px;max-width:min(440px,calc(100% - 28px));font-size:13px;backdrop-filter:blur(6px)}.info details summary{cursor:pointer;color:#a7c9ea;font-size:12px}.info details[open] .metrics{padding-top:8px}.viewbar{position:absolute;top:10px;left:10px;display:flex;gap:5px;z-index:2;flex-wrap:wrap;max-width:calc(100% - 20px)}.viewbar button{font-size:12px;padding:5px 7px;background:#102642e6;border-color:#33516e}.presets{gap:5px}.presets button{font-size:12px;padding:6px 8px}
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}.metrics strong{color:var(--fg);font-variant-numeric:tabular-nums}.metrics span{color:var(--muted)}.sun{color:var(--green)}.eclipse{color:var(--red)}
 .legend{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:5px;padding:9px;background:#0c152bc4;border-radius:8px;font-size:12px}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
 #err{display:none;position:absolute;top:35%;left:8%;max-width:84%;background:#331b28;border:1px solid #e28a94;padding:18px;border-radius:10px}
 footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--border);padding-top:12px;margin-top:15px}
-@media(max-width:820px){main{display:flex;flex-direction:column;height:auto}#view{min-height:520px;height:65dvh;order:0}aside{order:1;overflow:visible;border:0;border-top:1px solid var(--border)}header{padding:10px 14px}h1{font-size:17px}}
+@media(max-width:820px){header{padding:8px 12px}header p{display:none}h1{font-size:16px}main{display:flex;flex:1;min-height:0;flex-direction:column;overflow:hidden}#view{order:0;flex:1 1 auto;min-height:150px;height:auto}aside{order:1;flex:0 0 33dvh;max-height:45dvh;min-height:178px;overflow-y:auto;overscroll-behavior:contain;min-height:0;border:0;border-top:1px solid var(--border);padding:8px 12px 20px}aside h2{font-size:13px;margin:0 0 6px}.presets{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px}.presets button{white-space:nowrap;flex:0 0 auto;font-size:12px;min-height:36px}.info{font-size:12px;padding:6px 9px;left:8px;bottom:8px;max-width:calc(100% - 16px)}.info #status{margin-bottom:0!important}.legend{display:none}.viewbar{top:7px;left:7px;gap:4px}.viewbar button{padding:6px 8px;font-size:11px}.row{gap:6px}label{margin:6px 0 1px}.small{font-size:11px}.metrics{gap:2px 9px}.note{padding:7px}footer{margin-top:8px}.intro{display:none}}@media(max-height:650px) and (max-width:820px){aside{flex-basis:42dvh}.info{font-size:11px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head>
@@ -38,16 +38,15 @@ footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid va
 </div>
 <label for="alt">衛星高度 <output id="altv" class="val"></output></label>
 <input type="range" id="alt" min="200" max="2000" step="10" value="550">
-<div class="small">地球半徑 6,371 公里；軌道高度依真實比例呈現。</div>
+<div class="small intro">地球半徑 6,371 公里；軌道高度依真實比例呈現。</div>
 <label for="ltan">軌道通過赤道的當地太陽時間（LTAN） <output id="ltanv" class="val"></output></label>
 <input type="range" id="ltan" min="0" max="24" step="0.25" value="6">
-<div class="small">06:00 或 18:00 是「晨昏」：軌道平面接近正對太陽。</div>
+<div class="small intro">06:00 或 18:00 是「晨昏」：軌道平面接近正對太陽。</div>
 <label for="day">一年中的日期 <output id="dayv" class="val"></output></label>
 <input type="range" id="day" min="1" max="365" step="1" value="80">
 <div class="row"><button id="yearPlay">播放全年變化</button><button id="orbitPlay">播放衛星運行</button></div>
 <label for="phase">衛星在軌道上的位置 <output id="phasev" class="val"></output></label>
 <input type="range" id="phase" min="0" max="360" step="1" value="235">
-<div class="row" style="margin-top:14px"><button id="sunView">從太陽方向看</button><button id="edgeView">從軌道側面看</button></div>
 <h3>傾角與比較</h3>
 <div class="row"><label><input type="checkbox" id="custom">自訂軌道傾角</label><label><input type="checkbox" id="compare">疊加其他軌道</label></div>
 <label for="inc">軌道傾角 <output id="incv" class="val"></output></label>
@@ -60,11 +59,12 @@ footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid va
 </aside>
 <section id="view" aria-label="可拖拉旋轉的三維地球與軌道">
 <div id="canvas"></div>
+<div class="viewbar"><button id="resetView">重設視角</button><button id="sunView">正對太陽看</button><button id="edgeView">從側面看</button></div>
 <div class="legend">
 <div><i class="dot" style="background:#ffcb62"></i>有日照的軌道</div><div><i class="dot" style="background:#fb7583"></i>進入地球陰影</div>
 <div><i class="dot" style="background:#68ffdc"></i>衛星位置</div><div><i class="dot" style="background:#95a8e8"></i>比較軌道</div>
 </div>
-<div class="info"><div id="status" style="margin-bottom:7px"></div><div class="metrics" id="metrics"></div></div>
+<div class="info"><div id="status" style="margin-bottom:7px"></div><details id="stats"><summary>詳細數據</summary><div class="metrics" id="metrics"></div></details></div>
 <div id="err">3D 畫面無法啟動。請確認瀏覽器支援 WebGL 且可讀取 Three.js CDN。</div>
 </section>
 </main>
@@ -77,7 +77,7 @@ const el=Object.fromEntries(ids.map(x=>[x,document.getElementById(x)]));
 const out=id=>document.getElementById(id);
 const d2r=x=>x*Math.PI/180, r2d=x=>x*180/Math.PI;
 let scene,camera,renderer,controls,earth,grid,shadow,beam,sunMarker,orbitGroup,sat,axis,orbitPath,readouts={},playOrbit=false,playYear=false,lastTick=0;
-let period=95,inc=98,dayTick=0;
+let period=95,inc=98,dayTick=0,lastAlt=null;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 const sunVector=day=>{const L=2*Math.PI*(day-80)/YEAR;return V(Math.cos(L),Math.cos(EPS)*Math.sin(L),Math.sin(EPS)*Math.sin(L)).normalize()};
 function sunSyncInclination(alt){
@@ -154,18 +154,28 @@ function drawSun(sun){
  }
  beam.visible=el.showSun.checked;scene.add(beam);
 }
+function fitCamera(resetDirection=false){
+ const v=out('canvas'),w=v.clientWidth,h=v.clientHeight;
+ if(!w||!h||!camera||!controls)return;
+ const halfY=d2r(camera.fov/2),halfX=Math.atan(Math.tan(halfY)*(w/h));
+ const half=Math.min(halfX,halfY);
+ // Keep a full orbit visible, especially on narrow portrait screens.
+ const radius=RE+(+el.alt.value),distance=Math.max(RE*3.5,radius*1.32/Math.sin(half));
+ const direction=resetDirection?V(1.9,1.6,1.35).normalize():camera.position.clone().sub(controls.target).normalize();
+ camera.position.copy(direction.multiplyScalar(distance));controls.target.set(0,0,0);camera.lookAt(0,0,0);controls.update()
+}
 function resize(){
  const v=out('canvas'),w=v.clientWidth,h=v.clientHeight;
- if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)
+ if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);fitCamera()
 }
 function init(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x081223);
- camera=new THREE.PerspectiveCamera(40,1,30,RE*28);
+ camera=new THREE.PerspectiveCamera(46,1,30,RE*40);
  camera.position.set(RE*2.2,RE*2.0,RE*1.35);
  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
  out('canvas').appendChild(renderer.domElement);
- controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=RE*1.08;controls.maxDistance=RE*12;
+ controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.enablePan=false;controls.minDistance=RE*1.6;controls.maxDistance=RE*30;
  scene.add(new THREE.AmbientLight(0x334c78,1.2));
  const light=new THREE.DirectionalLight(0xffffff,3.6);light.name='sunlight';scene.add(light);
  scene.add(makeEarth());
@@ -175,14 +185,14 @@ function init(){
  halo.scale.set(RE*.08,RE*.08,1);sat.add(halo);scene.add(sat);
  orbitGroup=new THREE.Group();scene.add(orbitGroup);
  axis=new THREE.ArrowHelper(V(0,0,1),V(0,0,-RE*1.18),RE*2.36,0xa3c1ec,330,110);scene.add(axis);
- new ResizeObserver(resize).observe(out('canvas'));resize();refresh();
+ new ResizeObserver(resize).observe(out('canvas'));resize();out('stats').open=window.innerWidth>820;refresh();
  requestAnimationFrame(frame)
 }
 function refresh(){
  const alt=+el.alt.value, ltan=+el.ltan.value, day=+el.day.value, phase=+el.phase.value;
  inc=el.custom.checked?d2r(+el.inc.value):sunSyncInclination(alt);
  el.inc.disabled=!el.custom.checked;if(!el.custom.checked)el.inc.value=r2d(inc).toFixed(1);
- const o=orbitState(ltan,alt,inc,day);readouts=o;period=o.periodSec/60;
+ const o=orbitState(ltan,alt,inc,day);readouts=o;period=o.periodSec/60;if(lastAlt!==alt){lastAlt=alt;fitCamera()}
  out('altv').textContent=alt.toLocaleString()+' km';
  out('ltanv').textContent=String(Math.floor(ltan)%24).padStart(2,'0')+':'+String(Math.round((ltan%1)*60)).padStart(2,'0');
  const dt=new Date(Date.UTC(2026,0,day));out('dayv').textContent=(dt.getUTCMonth()+1)+'/'+dt.getUTCDate()+'（第 '+day+' 天）';
@@ -217,8 +227,9 @@ for(const [id,value] of [['dawn',6],['morning',10.5],['noon',12],['dusk',18]]){
  out(id).addEventListener('click',()=>{el.custom.checked=false;el.ltan.value=value;refresh()})
 }
 out('ideal').addEventListener('click',()=>{el.custom.checked=true;el.inc.value=90;el.day.value=80;el.ltan.value=6;refresh()});
-out('sunView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.sun).multiplyScalar(RE*3.4);controls.target.set(0,0,0);controls.update()});
-out('edgeView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.basis.p).multiplyScalar(RE*3.4);controls.target.set(0,0,0);controls.update()});
+out('sunView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.sun);fitCamera()});
+out('edgeView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.basis.p);fitCamera()});
+out('resetView').addEventListener('click',()=>{camera.up.set(0,0,1);fitCamera(true)});
 out('orbitPlay').addEventListener('click',()=>{playOrbit=!playOrbit;out('orbitPlay').classList.toggle('active',playOrbit);out('orbitPlay').textContent=playOrbit?'暫停衛星':'播放衛星運行'});
 out('yearPlay').addEventListener('click',()=>{playYear=!playYear;out('yearPlay').classList.toggle('active',playYear);out('yearPlay').textContent=playYear?'暫停全年':'播放全年變化'});
 try{init()}catch(e){out('err').style.display='block';out('err').textContent='3D 畫面啟動失敗：'+e.message;console.error(e)}
