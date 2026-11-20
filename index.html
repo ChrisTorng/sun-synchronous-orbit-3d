@@ -47,6 +47,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid va
 <div class="row"><button id="yearPlay">播放全年變化</button><button id="orbitPlay">播放衛星運行</button></div>
 <label for="phase">衛星在軌道上的位置 <output id="phasev" class="val"></output></label>
 <input type="range" id="phase" min="0" max="360" step="1" value="235">
+<div class="row" style="margin-top:14px"><button id="sunView">從太陽方向看</button><button id="edgeView">從軌道側面看</button></div>
 <h3>傾角與比較</h3>
 <div class="row"><label><input type="checkbox" id="custom">自訂軌道傾角</label><label><input type="checkbox" id="compare">疊加其他軌道</label></div>
 <label for="inc">軌道傾角 <output id="incv" class="val"></output></label>
@@ -216,6 +217,8 @@ for(const [id,value] of [['dawn',6],['morning',10.5],['noon',12],['dusk',18]]){
  out(id).addEventListener('click',()=>{el.custom.checked=false;el.ltan.value=value;refresh()})
 }
 out('ideal').addEventListener('click',()=>{el.custom.checked=true;el.inc.value=90;el.day.value=80;el.ltan.value=6;refresh()});
+out('sunView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.sun).multiplyScalar(RE*3.4);controls.target.set(0,0,0);controls.update()});
+out('edgeView').addEventListener('click',()=>{camera.up.set(0,0,1);camera.position.copy(readouts.basis.p).multiplyScalar(RE*3.4);controls.target.set(0,0,0);controls.update()});
 out('orbitPlay').addEventListener('click',()=>{playOrbit=!playOrbit;out('orbitPlay').classList.toggle('active',playOrbit);out('orbitPlay').textContent=playOrbit?'暫停衛星':'播放衛星運行'});
 out('yearPlay').addEventListener('click',()=>{playYear=!playYear;out('yearPlay').classList.toggle('active',playYear);out('yearPlay').textContent=playYear?'暫停全年':'播放全年變化'});
 try{init()}catch(e){out('err').style.display='block';out('err').textContent='3D 畫面啟動失敗：'+e.message;console.error(e)}
