@@ -34,7 +34,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid va
 <aside>
 <h2>調整軌道與太陽</h2>
 <div class="presets row">
-<button id="dawn">06:00 晨昏</button><button id="morning">10:30</button><button id="noon">12:00 正午</button><button id="dusk">18:00 晨昏</button>
+<button id="ideal">理想 β=90°（春分）</button><button id="dawn">06:00 晨昏</button><button id="morning">10:30</button><button id="noon">12:00 正午</button><button id="dusk">18:00 晨昏</button>
 </div>
 <label for="alt">衛星高度 <output id="altv" class="val"></output></label>
 <input type="range" id="alt" min="200" max="2000" step="10" value="550">
@@ -186,7 +186,7 @@ function refresh(){
  out('ltanv').textContent=String(Math.floor(ltan)%24).padStart(2,'0')+':'+String(Math.round((ltan%1)*60)).padStart(2,'0');
  const dt=new Date(Date.UTC(2026,0,day));out('dayv').textContent=(dt.getUTCMonth()+1)+'/'+dt.getUTCDate()+'（第 '+day+' 天）';
  out('phasev').textContent=phase+'°';out('incv').textContent=r2d(inc).toFixed(2)+'°';
- out('dawn').classList.toggle('active',ltan===6);out('morning').classList.toggle('active',ltan===10.5);
+ out('ideal').classList.toggle('active',ltan===6&&el.custom.checked&&Math.abs(+el.inc.value-90)<.01&&day===80);out('dawn').classList.toggle('active',ltan===6&&!el.custom.checked);out('morning').classList.toggle('active',ltan===10.5);
  out('noon').classList.toggle('active',ltan===12);out('dusk').classList.toggle('active',ltan===18);
  orbitGroup.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material)x.material.dispose()});orbitGroup.clear();orbitGroup.add(makePath(o));
  if(el.compare.checked){for(const t of [6,10.5,12,18])if(Math.abs(t-ltan)>0.1)orbitGroup.add(makePath(orbitState(t,alt,inc,day),true))}
@@ -213,8 +213,9 @@ function frame(t){
 }
 ids.forEach(id=>el[id].addEventListener('input',refresh));
 for(const [id,value] of [['dawn',6],['morning',10.5],['noon',12],['dusk',18]]){
- out(id).addEventListener('click',()=>{el.ltan.value=value;refresh()})
+ out(id).addEventListener('click',()=>{el.custom.checked=false;el.ltan.value=value;refresh()})
 }
+out('ideal').addEventListener('click',()=>{el.custom.checked=true;el.inc.value=90;el.day.value=80;el.ltan.value=6;refresh()});
 out('orbitPlay').addEventListener('click',()=>{playOrbit=!playOrbit;out('orbitPlay').classList.toggle('active',playOrbit);out('orbitPlay').textContent=playOrbit?'暫停衛星':'播放衛星運行'});
 out('yearPlay').addEventListener('click',()=>{playYear=!playYear;out('yearPlay').classList.toggle('active',playYear);out('yearPlay').textContent=playYear?'暫停全年':'播放全年變化'});
 try{init()}catch(e){out('err').style.display='block';out('err').textContent='3D 畫面啟動失敗：'+e.message;console.error(e)}
