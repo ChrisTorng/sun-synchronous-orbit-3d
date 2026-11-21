@@ -2,9 +2,24 @@
 
 這是一個專為理解晨昏太陽同步軌道（Dawn–Dusk Sun-Synchronous Orbit）而設計的**互動式幾何示意網站**，不是實際衛星追蹤器。
 
-## 開啟網站
+## 網站與憑證
 
-正式目標網址：`https://sun-synchronous-orbit-3d.christorng.idv.tw/`（GitHub Pages，需先在 GitHub Repo 的 Settings → Pages 將 Source 設為 GitHub Actions，接著重新執行「Deploy static site to GitHub Pages」）。DNS CNAME 指向 `christorng.github.io`，Repo 根目錄保留相同內容的 `CNAME`。在 Pages 尚未啟用以前，不應將此網址視為已完成部署。亦可在本地以現代瀏覽器開啟 `index.html`，但需要可連上 jsDelivr 取得 Three.js。
+本專案已使用 GitHub Pages 的 GitHub Actions 發布，無需 Vercel。自訂網域：
+
+- https://sun-synchronous-orbit-3d.christorng.idv.tw/
+- [GitHub Pages 設定](https://github.com/ChrisTorng/sun-synchronous-orbit-3d/settings/pages)
+
+Cloudflare DNS 設定為 `CNAME sun-synchronous-orbit-3d.christorng.idv.tw → christorng.github.io`，並採用 DNS only，以便 GitHub 簽發憑證。新自訂網域即使部署工作流程成功，也可能尚未取得 TLS 憑證；這時 GitHub Pages API 的 `https_certificate` 可能是 `null`，`https_enforced` 則是 `false`。請勿忽略瀏覽器的憑證警告。
+
+若 HTTPS 仍未可用，到 **Settings → Pages → Custom domain** 檢查並重新儲存該網域，讓 GitHub 嘗試簽發憑證；待憑證完成後，勾選 **Enforce HTTPS**。工作流程會嘗試在憑證已核准時啟用 HTTPS，但 GitHub 可能要求儲存庫管理權限，這項操作無法保證由工作流程完成。
+
+## 手機使用方式
+
+- **直向**：上方固定顯示完整 3D 地球，下方直接提供四個軌道模式與高度滑桿。
+- **橫向**：左側顯示 3D 地球，右側顯示四個模式與高度滑桿。
+- **進階設定**：日期、動畫、精細 LTAN、傾角與圖層預設收合。
+- **視角**：重設視角、正對太陽看、側面看；可拖曳旋轉、縮放，但不能平移到畫面外。
+- **日照視覺化**：軌道不會進入本影時不顯示大型陰影錐，避免遮蔽地球。
 
 ## 互動方式
 
