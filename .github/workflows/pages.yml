@@ -57,8 +57,9 @@ jobs:
             echo "::notice::Cannot read GitHub Pages certificate status with this token."
             exit 0
           fi
-          state="$(echo "$site_json" | jq -r '.https_certificate.state // "pending"')"
+          state="$(echo "$site_json" | jq -r '.https_certificate.state // "not-provisioned"')"
           enforce="$(echo "$site_json" | jq -r '.https_enforced // false')"
+          echo "$site_json" | jq -c '{cname, html_url, https_enforced, protected_domain_state, certificate: {state: .https_certificate.state, description: .https_certificate.description, domains: .https_certificate.domains}}'
           echo "Certificate state: $state; HTTPS enforced: $enforce"
           if [ "$state" = "approved" ] && [ "$enforce" != "true" ]; then
             if echo '{"https_enforced":true}' | gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" --input - >/dev/null; then
