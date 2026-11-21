@@ -60,6 +60,16 @@ aside{max-height:52dvh;padding:5px 10px 8px}
 h1{font-size:13px}
 }
 
+@media(max-width:820px) and (orientation:landscape){
+  main{flex-direction:row;align-items:stretch;min-height:0}
+  #view{order:0;flex:1 1 62%;width:62%;height:100%;min-width:0;min-height:0}
+  aside{order:1;flex:0 0 38%;width:38%;height:100%;max-width:350px;max-height:none;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 10px;border:0;border-left:1px solid var(--border)}
+  .presets{gap:5px}
+  .presets button{min-height:33px;font-size:12px;padding:5px 4px}
+  .viewbar{left:6px;top:6px;gap:4px}
+  .viewbar button{padding:5px 6px;min-height:32px;font-size:11px}
+  .advanced>summary{padding:7px 2px}
+}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head>
