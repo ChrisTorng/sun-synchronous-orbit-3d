@@ -4,7 +4,7 @@
 
 ## 開啟網站
 
-部署至 Vercel 後直接開啟首頁。亦可在本地以現代瀏覽器開啟 `index.html`，但需要可連上 jsDelivr 取得 Three.js。
+正式目標網址：`https://sso.christorng.idv.tw/`（GitHub Pages，需先在 GitHub Repo 的 Settings → Pages 將 Source 設為 GitHub Actions，接著重新執行「Deploy static site to GitHub Pages」）。DNS CNAME 指向 `christorng.github.io`，Repo 根目錄保留相同內容的 `CNAME`。在 Pages 尚未啟用以前，不應將此網址視為已完成部署。亦可在本地以現代瀏覽器開啟 `index.html`，但需要可連上 jsDelivr 取得 Three.js。
 
 ## 互動方式
 
@@ -39,4 +39,4 @@
 
 ## 技術
 
-純靜態 HTML、CSS、JavaScript、Three.js 0.169；不需要後端、登入或 API 金鑰。以 Vercel Git 連動自動部署。
+純靜態 HTML、CSS、JavaScript、Three.js 0.169；不需要後端、登入或 API 金鑰。以 GitHub Actions 部署至 GitHub Pages。
