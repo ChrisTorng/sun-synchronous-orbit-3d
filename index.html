@@ -18,27 +18,65 @@ button{font:inherit;color:var(--fg);padding:7px 11px;border:1px solid #456181;ba
 button.active{background:#285b68;border-color:var(--green)}button:disabled{opacity:.45;cursor:default}
 .presets button{font-size:12px;padding:5px 9px}.small{font-size:12px;color:var(--muted)}.note{background:#162843;padding:10px;border-left:3px solid #77b8ff;font-size:12px}
 #view{position:relative;min-height:450px;overflow:hidden}#canvas{position:absolute;inset:0}
-.info{position:absolute;left:14px;bottom:14px;background:#0c152bc9;border:1px solid #314766;border-radius:9px;padding:10px 12px;max-width:min(440px,calc(100% - 28px));font-size:13px;backdrop-filter:blur(6px)}.info details summary{cursor:pointer;color:#a7c9ea;font-size:12px}.info details[open] .metrics{padding-top:8px}.viewbar{position:absolute;top:10px;left:10px;display:flex;gap:5px;z-index:2;flex-wrap:wrap;max-width:calc(100% - 20px)}.viewbar button{font-size:12px;padding:5px 7px;background:#102642e6;border-color:#33516e}.presets{gap:5px}.presets button{font-size:12px;padding:6px 8px}
+.info{position:absolute;left:14px;bottom:14px;background:#0c152bc9;border:1px solid #314766;border-radius:9px;padding:10px 12px;max-width:min(440px,calc(100% - 28px));font-size:13px;backdrop-filter:blur(6px)}.info details summary{cursor:pointer;color:#a7c9ea;font-size:12px}.info details[open] .metrics{padding-top:8px}.viewbar{position:absolute;top:10px;left:10px;display:flex;gap:5px;z-index:2;flex-wrap:wrap;max-width:calc(100% - 20px)}.viewbar button{font-size:12px;padding:5px 7px;background:#102642e6;border-color:#33516e}.presets{gap:5px}.presets button{font-size:12px;padding:6px 8px}.advanced>summary{display:none}.advanced-body{padding-top:4px}.quick-result{font-size:13px;padding:7px 2px 2px;color:#bfdbf4;white-space:nowrap}.quick-result strong{color:#ffcb62}.advanced[open]>.advanced-body{display:block}
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}.metrics strong{color:var(--fg);font-variant-numeric:tabular-nums}.metrics span{color:var(--muted)}.sun{color:var(--green)}.eclipse{color:var(--red)}
 .legend{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:5px;padding:9px;background:#0c152bc4;border-radius:8px;font-size:12px}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
 #err{display:none;position:absolute;top:35%;left:8%;max-width:84%;background:#331b28;border:1px solid #e28a94;padding:18px;border-radius:10px}
 footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--border);padding-top:12px;margin-top:15px}
-@media(max-width:820px){header{padding:8px 12px}header p{display:none}h1{font-size:16px}main{display:flex;flex:1;min-height:0;flex-direction:column;overflow:hidden}#view{order:0;flex:1 1 auto;min-height:150px;height:auto}aside{order:1;flex:0 0 33dvh;max-height:45dvh;min-height:178px;overflow-y:auto;overscroll-behavior:contain;min-height:0;border:0;border-top:1px solid var(--border);padding:8px 12px 20px}aside h2{font-size:13px;margin:0 0 6px}.presets{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px}.presets button{white-space:nowrap;flex:0 0 auto;font-size:12px;min-height:36px}.info{font-size:12px;padding:6px 9px;left:8px;bottom:8px;max-width:calc(100% - 16px)}.info #status{margin-bottom:0!important}.legend{display:none}.viewbar{top:7px;left:7px;gap:4px}.viewbar button{padding:6px 8px;font-size:11px}.row{gap:6px}label{margin:6px 0 1px}.small{font-size:11px}.metrics{gap:2px 9px}.note{padding:7px}footer{margin-top:8px}.intro{display:none}}@media(max-height:650px) and (max-width:820px){aside{flex-basis:42dvh}.info{font-size:11px}}
+@media(max-width:820px){
+header{padding:6px 12px}header p{display:none}h1{font-size:15px;line-height:1.5}
+main{display:flex;flex:1;min-height:0;flex-direction:column;overflow:hidden}
+#view{order:0;flex:1 1 0;min-height:220px;height:auto}
+aside{order:1;flex:0 0 auto;width:100%;min-height:0;max-height:48dvh;overflow-y:auto;overscroll-behavior:contain;padding:8px 12px 13px;border:0;border-top:1px solid var(--border)}
+aside h2{font-size:13px;margin:0 0 5px}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.presets button{width:100%;min-width:0;min-height:39px;padding:6px 8px;font-size:13px;font-weight:600;white-space:nowrap}
+.presets #dusk{display:none}
+.primary-controls>label{margin:7px 0 0}
+.primary-controls input[type=range]{height:25px;margin:0}
+.quick-result{margin:0 0 5px;padding:1px 0;font-size:12px}
+.advanced{margin-top:4px;border-top:1px solid var(--border)}
+.advanced>summary{display:block;cursor:pointer;list-style:none;color:#afd0f8;padding:9px 3px;font-size:12px;font-weight:600}
+.advanced>summary::-webkit-details-marker{display:none}
+.advanced>summary:after{content:"▾";float:right}
+.advanced[open]>summary:after{content:"▴"}
+.advanced-body{padding:3px 0 10px}
+.advanced-body label{margin:10px 0 3px}
+.advanced-body input[type=range]{min-height:30px}
+.advanced-body .row button{min-height:35px}
+.info{display:none}
+.legend{display:none}
+.viewbar{top:8px;left:8px;gap:6px}
+.viewbar button{padding:7px 9px;font-size:12px;min-height:38px;background:#102642ec}
+#canvas{touch-action:none}
+.note{font-size:12px}
+}
+@media(max-width:820px) and (max-height:650px){
+aside{max-height:52dvh;padding:5px 10px 8px}
+.presets button{min-height:34px}
+.primary-controls>label{margin:3px 0 0}
+.quick-result{padding:0}
+h1{font-size:13px}
+}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head>
 <body>
 <header><h1>晨昏太陽同步軌道 · 3D 幾何實驗室</h1><p>不使用真實衛星清單；直接觀察向陽軌道、極軌、日照與地球陰影</p></header>
 <main>
-<aside>
-<h2>調整軌道與太陽</h2>
+<aside id="controlsPanel">
+<div class="primary-controls">
+<h2>選擇軌道方向</h2>
 <div class="presets row">
-<button id="ideal">理想 β=90°（春分）</button><button id="dawn">06:00 晨昏</button><button id="morning">10:30</button><button id="noon">12:00 正午</button><button id="dusk">18:00 晨昏</button>
+<button id="ideal">理想正對 β90°</button><button id="dawn">晨昏 06:00</button><button id="morning">偏移 10:30</button><button id="noon">正午 12:00</button><button id="dusk">晨昏 18:00</button>
 </div>
 <label for="alt">衛星高度 <output id="altv" class="val"></output></label>
 <input type="range" id="alt" min="200" max="2000" step="10" value="550">
-<div class="small intro">地球半徑 6,371 公里；軌道高度依真實比例呈現。</div>
+<div id="quickResult" class="quick-result" aria-live="polite">讀取軌道資料中…</div>
+</div>
+<details id="advancedControls" class="advanced" open><summary>進階設定：日期、動畫與軌道傾角 <span class="fold"></span></summary><div class="advanced-body">
 <label for="ltan">軌道通過赤道的當地太陽時間（LTAN） <output id="ltanv" class="val"></output></label>
 <input type="range" id="ltan" min="0" max="24" step="0.25" value="6">
 <div class="small intro">06:00 或 18:00 是「晨昏」：軌道平面接近正對太陽。</div>
@@ -56,6 +94,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid va
 <div class="row"><label><input type="checkbox" id="showShadow" checked>地球本影</label><label><input type="checkbox" id="showGrid" checked>經緯線</label><label><input type="checkbox" id="showSun" checked>太陽光方向</label></div>
 <div class="note" style="margin-top:13px"><strong>操作方式：</strong>拖曳旋轉 3D 視角；滾輪縮放。先選「06:00 晨昏」，將視角朝太陽光箭頭的方向觀看軌道平面，再調成 10:30 或 12:00 比較。調整日期則能理解為什麼不是全年完美 90°。</div>
 <footer>比例說明：地球半徑、軌道半徑、陰影寬度和衛星位置使用同一空間尺度。衛星發光小點、箭頭、光線符號及線條粗細僅為視覺標記，不按比例。模型使用圓形軌道、簡化的均勻歲差（J2）、均速太陽視黃經與太陽光平行近似；非精密星曆或碰撞分析工具。<br><a href="https://github.com/ChrisTorng/sun-synchronous-orbit-3d" target="_blank" rel="noopener" style="color:#89caff">原始碼與計算假設</a></footer>
+</div></details>
 </aside>
 <section id="view" aria-label="可拖拉旋轉的三維地球與軌道">
 <div id="canvas"></div>
@@ -185,7 +224,7 @@ function init(){
  halo.scale.set(RE*.08,RE*.08,1);sat.add(halo);scene.add(sat);
  orbitGroup=new THREE.Group();scene.add(orbitGroup);
  axis=new THREE.ArrowHelper(V(0,0,1),V(0,0,-RE*1.18),RE*2.36,0xa3c1ec,330,110);scene.add(axis);
- new ResizeObserver(resize).observe(out('canvas'));resize();out('stats').open=window.innerWidth>820;refresh();
+ new ResizeObserver(resize).observe(out('canvas'));resize();out('stats').open=window.innerWidth>820;const mq=window.matchMedia('(min-width:821px)');out('advancedControls').open=mq.matches;mq.addEventListener('change',e=>{out('advancedControls').open=e.matches;requestAnimationFrame(resize)});out('advancedControls').addEventListener('toggle',()=>requestAnimationFrame(resize));refresh();
  requestAnimationFrame(frame)
 }
 function refresh(){
@@ -209,6 +248,7 @@ function refresh(){
  out('status').innerHTML='<strong>太陽光與軌道平面的 β 角： '+Math.abs(beta).toFixed(1)+'°</strong><br>'+
   '<span class="'+(o.eclipseSec===0?'sun':'eclipse')+'">'+(o.eclipseSec===0?'全程日照（幾何模型）':'每圈有一段地球本影')+'</span>'+
   '　目前衛星：<span id="currentLight" class="'+(inDark?'eclipse':'sun')+'">'+(inDark?'陰影中':'日照中')+'</span>';
+ out('quickResult').innerHTML='<strong>|β| '+Math.abs(beta).toFixed(1)+'°</strong> · <span class="'+(o.eclipseSec===0?'sun':'eclipse')+'">'+(o.eclipseSec===0?'衛星整圈都在日照中':'每圈陰影 '+(o.eclipseSec/60).toFixed(1)+' 分')+'</span>';
  out('metrics').innerHTML='<span>太陽同步傾角</span><strong>'+r2d(sunSyncInclination(alt)).toFixed(2)+'°</strong>'+
  '<span>實際使用傾角</span><strong>'+r2d(inc).toFixed(2)+'°</strong>'+
  '<span>無本影所需 |β|</span><strong>≥ '+threshold.toFixed(1)+'°</strong>'+
