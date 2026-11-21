@@ -185,12 +185,9 @@ function drawShadow(sun){
 function drawSun(sun){
  if(beam){scene.remove(beam);beam.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material)x.material.dispose()})}
  beam=new THREE.Group();
- const dir=sun.clone().negate(),orig=sun.clone().multiplyScalar(RE*2.3),length=RE*0.85;
- const arrow=new THREE.ArrowHelper(dir,orig,length,0xffd377,550,250);beam.add(arrow);
- for(let j=-2;j<=2;j++){
-   const v=V(0,j*RE*0.21,0).add(sun.clone().multiplyScalar(RE*1.72));
-   const line=new THREE.ArrowHelper(dir,v,RE*.43,0xffcc76,250,110);beam.add(line)
- }
+ // One modest sun ray near Earth is clearer than multiple large arrows off screen.
+ const dir=sun.clone().negate(),orig=sun.clone().multiplyScalar(RE*1.39),length=RE*0.40;
+ beam.add(new THREE.ArrowHelper(dir,orig,length,0xffcf71,RE*.13,RE*.052));
  beam.visible=el.showSun.checked;scene.add(beam);
 }
 function fitCamera(resetDirection=false){
@@ -210,6 +207,7 @@ function resize(){
 function init(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x081223);
  camera=new THREE.PerspectiveCamera(46,1,30,RE*40);
+ camera.up.set(0,0,1);
  camera.position.set(RE*2.2,RE*2.0,RE*1.35);
  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -242,7 +240,7 @@ function refresh(){
  if(el.compare.checked){for(const t of [6,10.5,12,18])if(Math.abs(t-ltan)>0.1)orbitGroup.add(makePath(orbitState(t,alt,inc,day),true))}
  sat.position.copy(at(o,d2r(phase)));
  const inDark=dark(sat.position,o.sun);
- drawShadow(o.sun);drawSun(o.sun);grid.visible=el.showGrid.checked;
+ drawShadow(o.sun);shadow.visible=el.showShadow.checked&&o.eclipseSec>0;drawSun(o.sun);grid.visible=el.showGrid.checked;
  scene.getObjectByName('sunlight').position.copy(o.sun).multiplyScalar(RE*30);
  const beta=r2d(o.beta),threshold=r2d(o.threshold);
  out('status').innerHTML='<strong>太陽光與軌道平面的 β 角： '+Math.abs(beta).toFixed(1)+'°</strong><br>'+
