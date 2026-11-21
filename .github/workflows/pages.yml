@@ -22,10 +22,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # GitHub Pages must be enabled once under Settings > Pages (Source: GitHub Actions).
+      # GITHUB_TOKEN cannot create the Pages site: it lacks repository administration permission.
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload static website
         uses: actions/upload-pages-artifact@v4
         with:
