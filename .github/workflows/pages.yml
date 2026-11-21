@@ -24,6 +24,18 @@ jobs:
         uses: actions/checkout@v4
       # GitHub Pages must be enabled once under Settings > Pages (Source: GitHub Actions).
       # GITHUB_TOKEN cannot create the Pages site: it lacks repository administration permission.
+      - name: Validate page structure and JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          import pathlib, re
+          html = pathlib.Path('index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script type="module">([\\s\\S]*?)</script>', html)
+          assert len(scripts) == 1, 'Expected exactly one inline module'
+          for element_id in ['canvas','view','controlsPanel','advancedControls','quickResult','ideal','dawn','noon','alt','sunView','resetView']:
+              assert f'id="{element_id}"' in html, f'Missing element {element_id}'
+          pathlib.Path('/tmp/orbit.mjs').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/orbit.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload static website
