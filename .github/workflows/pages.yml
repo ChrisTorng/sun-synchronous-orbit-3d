@@ -45,3 +45,25 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Check certificate and enable HTTPS when available
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          site_json="$(gh api "repos/${GITHUB_REPOSITORY}/pages" 2>/dev/null || true)"
+          if [ -z "$site_json" ]; then
+            echo "::notice::Cannot read GitHub Pages certificate status with this token."
+            exit 0
+          fi
+          state="$(echo "$site_json" | jq -r '.https_certificate.state // "pending"')"
+          enforce="$(echo "$site_json" | jq -r '.https_enforced // false')"
+          echo "Certificate state: $state; HTTPS enforced: $enforce"
+          if [ "$state" = "approved" ] && [ "$enforce" != "true" ]; then
+            if echo '{"https_enforced":true}' | gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" --input - >/dev/null; then
+              echo "HTTPS enforcement enabled."
+            else
+              echo "::warning::HTTPS certificate approved but changing Pages site settings requires repository admin permissions."
+            fi
+          fi
